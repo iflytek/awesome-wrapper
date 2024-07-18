@@ -57,13 +57,13 @@ class PromptInferenceInfo:
         self.result_q = result_q
 
 
-def launch_openai_server(mode_path: str, server_port: int):
+def launch_openai_server(mode_path: str, server_port: int, apikey: str):
     try:
         subprocess.run([
             'python', '-m', 'vllm.entrypoints.openai.api_server',
             '--model', mode_path,
             '--port', str(server_port),
-            '--api-key', "vllm.key"
+            '--api-key', apikey
         ], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Failed to start vLLM server: {e}")
@@ -169,6 +169,7 @@ class Wrapper(WrapperBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.apikey = None
         self.client = None
         self.base_model = None
         self.pretrained_name = None
@@ -201,6 +202,7 @@ class Wrapper(WrapperBase):
     def wrapperInit(self, config: {}) -> int:
         self.base_model = os.environ.get("FULL_MODEL_PATH")
         self.pretrained_name = os.environ.get("PRETRAINED_MODEL_NAME")
+        self.apikey = os.environ.get("OPENAI_APIKEY", "default")
 
         self.filelogger.info(f"base_model: {self.base_model}")
         if not os.path.isdir(self.base_model):
@@ -212,7 +214,7 @@ class Wrapper(WrapperBase):
         # 服务器实际地址
         serverUrl = f"http://127.0.0.1:{port}/v1"
         # 启动服务器进程
-        launch_openai_server(self.base_model, port)
+        launch_openai_server(self.base_model, port, self.apikey)
         # 监听服务器是否启动完成
         self.wait_server_ready(serverUrl)
         # 创建openai客户端
