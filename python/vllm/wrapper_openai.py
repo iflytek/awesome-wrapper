@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding:utf-8
-
+import base64
 import enum
 import os.path
 import json
@@ -11,7 +11,10 @@ import threading
 import time
 import uuid
 from aiges.core.types import *
-from aiges.dto import Response, ResponseData, DataListCls, SessionCreateResponse, callback
+try:
+    from aiges_embed import ResponseData, Response, DataListCls, SessionCreateResponse, callback  # c++
+except:
+    from aiges.dto import Response, ResponseData, DataListCls, SessionCreateResponse, callback
 
 from aiges.sdk import WrapperBase
 from aiges.utils.log import getFileLogger
@@ -44,6 +47,7 @@ class PromptInferenceInfo:
                  thread_id: str,
                  mode: RequestMode,
                  prompt: str,
+                 image: str,
                  requestInfo: RequestInfo,
                  # functions: list,
                  result_q: queue.Queue = None):
@@ -52,30 +56,23 @@ class PromptInferenceInfo:
         self.thread_id = thread_id
         self.mode = mode
         self.prompt = prompt
+        self.image = image
         # self.functions = functions
         self.request_id = str(uuid.uuid4().hex)
         self.result_q = result_q
 
 
-def launch_openai_server(mode_path: str, server_port: int, apikey: str):
+def launch_openai_server(mode_path: str, server_port: int, gpu_memory_utilization: float):
     try:
-        subprocess.run([
-            'python', '-m', 'vllm.entrypoints.openai.api_server',
-            '--model', mode_path,
-            '--port', str(server_port),
-            '--api-key', apikey
-        ], check=True)
+        subprocess.Popen([
+            'vllm', 'serve', mode_path, '--port', str(server_port), '--gpu_memory_utilization', str(gpu_memory_utilization)
+        ])
     except subprocess.CalledProcessError as e:
         print(f"Failed to start vLLM server: {e}")
 
 
-def get_payload_messages(reqData: DataListCls):
+def get_payload(reqData: DataListCls):
     return json.loads(reqData.get('input').data.decode('utf-8'))
-
-
-def get_payload_functions(reqData: DataListCls):
-    messages = json.loads(reqData.get('messages').data.decode('utf-8'))
-    return messages.get("functions", None)
 
 
 def resp_content(status, text):
@@ -169,19 +166,17 @@ class Wrapper(WrapperBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.apikey = None
+        self.gpu_memory_utilization = None
         self.client = None
         self.base_model = None
         self.pretrained_name = None
         import logging
-        self.filelogger = getFileLogger(level=logging.DEBUG)
-        self.patch_id = {}
-        self.patch_id_lock = threading.Lock()
+        self.logger = getFileLogger(level=logging.DEBUG)
         self.request_map: dict[str, RequestInfo] = {}
         self.request_map_lock = threading.Lock()
         self.thread_pool_size = 32
         self.thread_pool = None
-        self.filelogger.info(f"openai client wrapper constructed")
+        self.logger.info(f"openai client wrapper constructed")
 
     def wait_server_ready(self, server_url: str):
         import requests
@@ -190,23 +185,25 @@ class Wrapper(WrapperBase):
                 response = requests.get(server_url + "/models", timeout=(1, 3))
                 # 检查响应状态码
                 if response.status_code == 200:
-                    self.filelogger.info(f"{server_url} ready, {response.content}")
+                    self.logger.info(f"{server_url} ready, {response.content}")
                     break
                 else:
-                    self.filelogger.info(f"{server_url} not ready")
+                    self.logger.info(f"{server_url} not ready")
                 response.close()
             except Exception as e:
-                self.filelogger.info(f"{server_url} connect exception: {e}")
+                self.logger.info(f"{server_url} connect exception: {e}")
             time.sleep(5)
 
     def wrapperInit(self, config: {}) -> int:
         self.base_model = os.environ.get("FULL_MODEL_PATH")
-        self.pretrained_name = os.environ.get("PRETRAINED_MODEL_NAME")
-        self.apikey = os.environ.get("OPENAI_APIKEY", "default")
+        size_str = os.environ.get("THREAD_POOL_SIZE", "32")
+        mem_str = os.environ.get("GPU_MEMORY_UTILIZATION", "0.3")
+        self.thread_pool_size = int(size_str)
+        self.gpu_memory_utilization = float(mem_str)
 
-        self.filelogger.info(f"base_model: {self.base_model}")
+        self.logger.info(f"base_model: {self.base_model}")
         if not os.path.isdir(self.base_model):
-            self.filelogger.error(f"not find the base_model in FULL_MODEL_PATH")
+            self.logger.error(f"not find the base_model in FULL_MODEL_PATH")
             return -1
 
         # 获取服务监听端口
@@ -214,13 +211,15 @@ class Wrapper(WrapperBase):
         # 服务器实际地址
         serverUrl = f"http://127.0.0.1:{port}/v1"
         # 启动服务器进程
-        launch_openai_server(self.base_model, port, self.apikey)
+        launch_openai_server(self.base_model, port, self.gpu_memory_utilization)
         # 监听服务器是否启动完成
         self.wait_server_ready(serverUrl)
         # 创建openai客户端
-        self.client = OpenAI(base_url=serverUrl, api_key="vllm.key")
+        self.client = OpenAI(base_url=serverUrl, api_key="EMPTY")
+        self.pretrained_name = self.client.models.list().data[0].id
+        self.logger.debug(f'=======model: {self.pretrained_name}============')
         self.thread_pool = ThreadPool(num_threads=self.thread_pool_size, wrapper=self)
-        self.filelogger.info(f'wrapper init success, create thread: {self.thread_pool_size}')
+        self.logger.info(f'wrapper init success, create thread: {self.thread_pool_size}')
         return 0
 
     def wrapperFini(self) -> int:
@@ -233,29 +232,32 @@ class Wrapper(WrapperBase):
         return ""
 
     def wrapperWrite(self, handle: str, req: DataListCls) -> int:
-        self.filelogger.debug(f'start wrapperWrite handle {handle}')
-        prompt = get_payload_messages(req)
+        self.logger.debug(f'start wrapperWrite handle {handle}')
+        payload = get_payload(req)
+        prompt = payload["text"]
+        image_base64 = payload["image"]
+        # image = Image.open(BytesIO(image_base64)).convert("RGB")
 
         self.request_map_lock.acquire()
         requestInfo = self.request_map[handle]
         if requestInfo is None:
-            self.filelogger.error("can't get this handle:" % handle)
+            self.logger.error("can't get this handle:" % handle)
             return -1
         self.request_map_lock.release()
 
         thread_id = self.thread_pool.alloc_min_thread()
-        inferenceInfo = PromptInferenceInfo(self, thread_id, RequestMode.STREAM, prompt, requestInfo)
+        inferenceInfo = PromptInferenceInfo(self, thread_id=thread_id, mode=RequestMode.STREAM, prompt=prompt, image=image_base64, requestInfo=requestInfo)
         self.thread_pool.put_task(thread_id, inferenceInfo)
         self.request_map_lock.acquire()
         self.request_map[handle].requests.append(inferenceInfo.request_id)
         self.request_map_lock.release()
-        self.filelogger.debug(
+        self.logger.debug(
             f'success wrapperWrite handle: {handle}, thread_id: {thread_id}, request_id: {inferenceInfo.request_id}')
         return 0
 
     def wrapperCreate(self, params: {}, sid: str, persId: int = 0, usrTag: str = "") -> SessionCreateResponse:
         patch_id = str(params.get('patch_id', "0"))
-        self.filelogger.info(f'start wrapperCreate {params}')
+        self.logger.info(f'start wrapperCreate {params}')
         if len(patch_id) == 0:
             patch_id = "0"
         requestInfo = RequestInfo(sid, params, usrTag)
@@ -266,15 +268,15 @@ class Wrapper(WrapperBase):
         s = SessionCreateResponse()
         s.handle = requestInfo.handle
         s.error_code = 0
-        self.filelogger.debug(f'success wrapperCreate {patch_id}, handle {requestInfo.handle}')
+        self.logger.debug(f'success wrapperCreate {patch_id}, handle {requestInfo.handle}')
         return s
 
     def wrapperDestroy(self, handle: str) -> int:
-        self.filelogger.debug(f'start wrapperDestroy {handle}')
+        self.logger.debug(f'start wrapperDestroy {handle}')
         self.request_map_lock.acquire()
         requestInfo = self.request_map[handle]
         if requestInfo is None:
-            self.filelogger.error("can't get this handle:" % handle)
+            self.logger.error("can't get this handle:" % handle)
             self.request_map_lock.release()
             return -1
         self.request_map_lock.release()
@@ -283,7 +285,7 @@ class Wrapper(WrapperBase):
         del self.request_map[handle]
         self.request_map_lock.release()
 
-        self.filelogger.debug(f'success wrapperDestroy {handle}')
+        self.logger.debug(f'success wrapperDestroy {handle}')
         return 0
 
     def wrapperTestFunc(self, data: [], respData: []):
@@ -309,21 +311,27 @@ class Wrapper(WrapperBase):
                 callback(res, user_tag)
             elif inferenceInfo.mode == RequestMode.ONCE:
                 inferenceInfo.result_q.put(res)
-            self.filelogger.info(f'====>inference abort before infer, {request_id}')
+            self.logger.info(f'====>inference abort before infer, {request_id}')
             return
 
         params = requestInfo.params
         prompt = inferenceInfo.prompt
+        image = inferenceInfo.image
         temperature = get_param_temperature(params)
         max_tokens = get_param_max_new_tokens(params)
 
-        # streaming case
-        # sparkMsgs = json.loads(prompt)["messages"]
-        # openaiMsgs = [{"role": item["role"], "content": item["content"]} for item in sparkMsgs]
         openaiMsgs = [
             {
                 "role": "user",
-                "content": prompt,
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{image}"
+                        },
+                    },
+                ],
             }
         ]
 
@@ -346,7 +354,7 @@ class Wrapper(WrapperBase):
                     is_stopped = requestInfo.stop_q.get_nowait()
                 if is_stopped:
                     # 提前结束
-                    self.filelogger.info(f'====>inference abort when infer, {request_id}')
+                    self.logger.info(f'====>inference abort when infer, {request_id}')
                     break
                 if chunk.choices[0].delta.content is not None:
                     res = Response()
@@ -369,9 +377,9 @@ class Wrapper(WrapperBase):
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self.filelogger.error(f"An error occurred when infer: {e}")
+            self.logger.error(f"An error occurred when infer: {e}")
 
-        self.filelogger.info(
+        self.logger.info(
             f'====>streaming inference end, {request_id}: {full_content}, sid: {sid}, in_tokens: {prompt_tokens_len}, out_tokens: {result_tokens_len}')
 
         return
