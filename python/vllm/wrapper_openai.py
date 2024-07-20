@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # coding:utf-8
-import base64
 import enum
 import os.path
 import json
@@ -11,6 +10,7 @@ import threading
 import time
 import uuid
 from aiges.core.types import *
+
 try:
     from aiges_embed import ResponseData, Response, DataListCls, SessionCreateResponse, callback  # c++
 except:
@@ -236,7 +236,6 @@ class Wrapper(WrapperBase):
         payload = get_payload(req)
         prompt = payload["text"]
         image_base64 = payload["image"]
-        # image = Image.open(BytesIO(image_base64)).convert("RGB")
 
         self.request_map_lock.acquire()
         requestInfo = self.request_map[handle]
@@ -246,20 +245,19 @@ class Wrapper(WrapperBase):
         self.request_map_lock.release()
 
         thread_id = self.thread_pool.alloc_min_thread()
-        inferenceInfo = PromptInferenceInfo(self, thread_id=thread_id, mode=RequestMode.STREAM, prompt=prompt, image=image_base64, requestInfo=requestInfo)
+        inferenceInfo = PromptInferenceInfo(self, thread_id=thread_id, mode=RequestMode.STREAM, prompt=prompt,
+                                            image=image_base64, requestInfo=requestInfo)
         self.thread_pool.put_task(thread_id, inferenceInfo)
         self.request_map_lock.acquire()
         self.request_map[handle].requests.append(inferenceInfo.request_id)
         self.request_map_lock.release()
         self.logger.debug(
-            f'success wrapperWrite handle: {handle}, thread_id: {thread_id}, request_id: {inferenceInfo.request_id}')
+            f'success wrapperWrite handle: {handle}, thread_id: {thread_id}, request_id: {inferenceInfo.request_id}, sid: {requestInfo.sid}')
         return 0
 
     def wrapperCreate(self, params: {}, sid: str, persId: int = 0, usrTag: str = "") -> SessionCreateResponse:
-        patch_id = str(params.get('patch_id', "0"))
         self.logger.info(f'start wrapperCreate {params}')
-        if len(patch_id) == 0:
-            patch_id = "0"
+
         requestInfo = RequestInfo(sid, params, usrTag)
         self.request_map_lock.acquire()
         self.request_map[requestInfo.handle] = requestInfo
@@ -268,7 +266,7 @@ class Wrapper(WrapperBase):
         s = SessionCreateResponse()
         s.handle = requestInfo.handle
         s.error_code = 0
-        self.logger.debug(f'success wrapperCreate {patch_id}, handle {requestInfo.handle}')
+        self.logger.debug(f'success wrapperCreate, handle: {requestInfo.handle}, sid: {sid}')
         return s
 
     def wrapperDestroy(self, handle: str) -> int:
@@ -285,7 +283,7 @@ class Wrapper(WrapperBase):
         del self.request_map[handle]
         self.request_map_lock.release()
 
-        self.logger.debug(f'success wrapperDestroy {handle}')
+        self.logger.debug(f'success wrapperDestroy, handle: {handle}, sid: {requestInfo.sid}')
         return 0
 
     def wrapperTestFunc(self, data: [], respData: []):
@@ -311,7 +309,7 @@ class Wrapper(WrapperBase):
                 callback(res, user_tag)
             elif inferenceInfo.mode == RequestMode.ONCE:
                 inferenceInfo.result_q.put(res)
-            self.logger.info(f'====>inference abort before infer, {request_id}')
+            self.logger.info(f'====>inference abort before infer, request_id: {request_id}, sid: {sid}')
             return
 
         params = requestInfo.params
@@ -336,8 +334,6 @@ class Wrapper(WrapperBase):
         ]
 
         full_content = ""
-        prompt_tokens_len = 10
-        result_tokens_len = 0
         try:
             # 如果是普通流式请求
             result_tokens_len = 0
@@ -354,7 +350,7 @@ class Wrapper(WrapperBase):
                     is_stopped = requestInfo.stop_q.get_nowait()
                 if is_stopped:
                     # 提前结束
-                    self.logger.info(f'====>inference abort when infer, {request_id}')
+                    self.logger.info(f'====>inference abort when infer, request: {request_id}, sid: {sid}')
                     break
                 if chunk.choices[0].delta.content is not None:
                     res = Response()
@@ -377,9 +373,8 @@ class Wrapper(WrapperBase):
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self.logger.error(f"An error occurred when infer: {e}")
+            self.logger.error(f"An error occurred when infer: {e}, sid: {sid}")
 
-        self.logger.info(
-            f'====>streaming inference end, {request_id}: {full_content}, sid: {sid}, in_tokens: {prompt_tokens_len}, out_tokens: {result_tokens_len}')
+        self.logger.info(f'streaming infer end, sid: {sid}')
 
         return
