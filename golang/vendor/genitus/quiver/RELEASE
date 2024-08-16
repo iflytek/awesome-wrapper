@@ -1,0 +1,58 @@
+ver0.3.14:
+1. update ase multi-media dispatch size limit to 5m;
+
+ver0.3.13:
+1. add `WithTTL()` function to support hbase ttl(ms) setting.
+2. set hbase cell timestamp with event.timestamp;
+
+v0.3.12:
+1. update output.data value from [:0] to len(data);
+2. add function `UploadMediaByBatch` to support ase multi-media batch upload with json format;
+3. add ase multi-media hbase/oss dispatch logic with tag.source = 'aiaas'/'aipaas'/other;
+
+0.3.11
+1. add hbase re-connect mechanism to clame down hbase unstable;
+
+0.3.10
+1. update gohbase usage to fix bug for blocking hbase call while hbase unstable;
+
+0.3.9
+1. add metric for quiver;
+
+0.3.8
+1. fixbug for high cpu load, update gohbase client init count and batch size & flush ts;
+
+0.3.7
+1. fixbug for `github.com/tsuna/gohbase` rpc.go with log.Fatal() process exit;
+NOTICE: MUST UPDATE `github.com/tsuna/gohbase/rpc.go`
+
+0.3.6
+1. add error catch stack log;
+
+0.3.5
+1. add more sid check with sid length >= 32;
+
+0.3.4
+1. fixbug for `github.com/tsuna/gohbase` rpc.go with deadloop `lookupRegion()`` search, add `maxSendRPCTries` control;
+2. fixbug for invalid `sid-tableName` hbase insert;
+NOTICE: MUST UPDATE `github.com/tsuna/gohbase/rpc.go`;
+
+0.3.3
+1. update consumer go routine `infof` with `debugf`;
+
+0.3.2
+1. fix issus with gohbase inner `logrus` default os.stderr log output;
+
+0.3.1
+1. remove auf/auf/rate in Flush;
+
+0.3.0
+1. update event log schema to v2;
+2. add support for event log v2, such as output/media;
+3. fix bug for gohbase cpu occupy, for dead-loop check, with close connection while waiting;
+
+0.2.3.2
+1. update hbase flush interval from ns to ms;
+
+0.2.3.1
+1. add more debug log msg;

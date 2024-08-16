@@ -1,0 +1,14 @@
+version: "3"
+services:
+  client:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/grpc/client
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './client'
+    command: '-tm 1000 -goroutines 10 -count 100000 -h "10.1.87.67" -p 50051 -rbuf 1024 -wbuf 1024'

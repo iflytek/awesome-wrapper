@@ -1,0 +1,108 @@
+@use "../variables" as *;
+@use "../mixins/outline" as *;
+
+// DatePicker Component styles
+@import "../../node_modules/react-datepicker/dist/react-datepicker.css";
+@import "../../node_modules/react-datepicker/dist/react-datepicker-cssmodules.css";
+
+.drp-button {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drp-label {
+  margin-bottom: -10px;
+}
+
+.drp-container {
+  position: relative;
+  svg {
+    margin-right: 5px;
+  }
+
+  .drp-dropdown {
+    background-color: #212124;
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0px;
+    width: 400px;
+    padding: 20px 20px 20px 20px;
+    border: 1px solid rgb(75, 75, 75);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.9);
+    border-radius: 4px;
+
+    z-index: 1;
+  }
+
+  h4:nth-child(1),
+  h5:nth-child(1) {
+    margin-top: 0;
+  }
+
+  h4,
+  h5 {
+    margin: 10px 0;
+  }
+
+  .drp-presets {
+    display: flex;
+    flex-direction: row;
+    .drp-preset-column {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
+
+  .drp-preset {
+    @include outline;
+
+    border: none;
+    text-align: left;
+    padding: 2px 0;
+    color: rgba(255, 255, 255, 0.66);
+
+    &:hover,
+    &.active {
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  &.opened {
+    .drp-dropdown {
+      display: block;
+    }
+  }
+
+  .drp-calendar-input-group {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+// range picker custom styles
+.react-datepicker__day--in-range {
+  background-color: #216ba5 !important;
+  color: white !important;
+}
+.react-datepicker__day--in-selecting-range {
+  background: none;
+  color: black;
+}
+.react-datepicker__day--in-range:hover {
+  background-color: #216ba5;
+  color: white;
+}
+
+.react-datepicker__day--disabled {
+  background-color: transparent;
+  color: #ccc;
+}
+
+.react-datepicker__day--in-selecting-range:hover {
+  color: white;
+}

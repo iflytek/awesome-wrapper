@@ -1,0 +1,63 @@
+[lb_ctl]
+#测试目标服务配置，配置格式如下,注意分割符的差异
+#taddrs="iat_lb@192.168.86.60:9095;192.168.86.59:9095"
+taddrs="lbv2@127.0.0.1:9095"
+timeout = 500 #客户端请求超时时间，单位毫秒
+conn-pool-size=20 #设置连接池大小
+
+[log]
+level = "error"
+file = "lb.log"
+size = 100
+count = 20
+die = 30
+
+[trace]
+ip = "172.16.51.13"
+able = 0
+dump = 0
+
+[dispatcher]
+mode = "reporterEx" #clientEx or reporterEx
+svc = "iat"
+subsvc = "sms"
+
+[client]
+all = 1
+nbest = 2 #配置nbest
+thCnt = 16 #配置线程数
+loopCnt = 10000 #配置每路线程的循环次数
+print = 0#打印结果(0-false, 1-true)
+
+[clientEx]
+all = 1
+uid = 12345
+nbest = 2 #配置nbest
+thCnt = 16 #配置线程数
+loopCnt = 10000 #配置每路线程的循环次数
+print = 1#打印结果(0-false, 1-true)
+
+[reporter]
+nodes = "127.0.0.1,127.0.0.2,127.0.0.3"
+interval = 10 # 上报的间隔时间，0为无间隔
+loopCnt = 100 #配置每个节点的循环次数
+
+["127.0.0.1"]
+total = 10
+idle = 10
+best = 10
+
+["127.0.0.2"]
+total = 10
+idle = 3
+best = 10
+
+["127.0.0.3"]
+total = 10
+idle = 10
+best = 10
+
+[reporterEx]
+nodes = "127.0.0.1,127.0.0.2,127.0.0.3"
+interval = 1000 # 上报的间隔时间，0为无间隔 毫秒
+loopCnt = 10000 #配置每个节点的循环次数

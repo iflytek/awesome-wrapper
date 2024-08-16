@@ -1,0 +1,1 @@
+client.exe  -tm 1000 -goroutines 10 -count 100000

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  server:
+    image: hub.iflytek.com/aiaas/xsf:v1.6.3
+    working_dir: /xsf/perf/server
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './server'
+    command: '-m 0 -c server.toml  -s xsf-server -p xsf -g xsf -u http://10.1.87.69:6868'

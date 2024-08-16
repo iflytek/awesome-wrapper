@@ -1,0 +1,51 @@
+POST http://10.1.87.54:800/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "150",
+  "async": false,
+  "params": {
+    "callback": "",
+    "service_address": "http://api.xf-yun.com/v1/private/s67c9c78c"
+  }
+}
+
+### curl -H 'Content-Type:application/json' -d '{"id": "2", "service_address": "http://42.62.42.18/msp.do"}' http://172.16.59.176:5200/api/v1/mission/exec
+
+###
+
+POST http://172.16.59.176:5200/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "2",
+  "service_address": "http://42.62.42.18/msp.do",
+  "async": false
+}
+
+###
+POST http://172.16.59.176:5200/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "2",
+  "service_address": "http://42.62.42.18/msp.do",
+  "async": true
+}
+
+###
+POST http://10.1.87.54:800/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "2",
+  "service_address": "http://42.62.42.18/msp.do",
+  "async": true
+}
+
+###
+
+GET http://172.31.103.99:8085/dcos/aipaas/app/status?idc=xxx&namespace=xxx&name=xxx
+
+###
+

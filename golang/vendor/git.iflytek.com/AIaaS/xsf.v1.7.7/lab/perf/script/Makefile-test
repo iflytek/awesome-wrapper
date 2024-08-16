@@ -1,0 +1,10 @@
+clientCfg=client.yml
+serverCfg=server.yml
+
+.PHONY: run client client-hystrix server
+
+run:
+	client
+
+client:
+	echo client

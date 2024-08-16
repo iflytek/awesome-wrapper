@@ -1,0 +1,18 @@
+version: "3"
+services:
+  client:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/perf/client
+    network_mode: "host"
+    environment:
+        - XSF-DEBUG=0
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    volumes:
+        - ${PWD}/log:/xsf/perf/client/log
+    entrypoint: './client'
+    command: '-s 0 -m 1 -pre 0 -tm 1000 -goroutines 100 -count 100000'

@@ -1,0 +1,14 @@
+[package]
+name = "rustdeps"
+version = "0.3.3"
+authors = ["Dmitry Filimonov"]
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+# py-spy = { path = "../../../py-spy" }
+# rbspy = { path = "../../../rbspy" }
+
+py-spy = { git = "https://github.com/pyroscope-io/py-spy", rev = "f990f0b" }
+rbspy = { git = "https://github.com/pyroscope-io/rbspy", rev = "599b90a" }

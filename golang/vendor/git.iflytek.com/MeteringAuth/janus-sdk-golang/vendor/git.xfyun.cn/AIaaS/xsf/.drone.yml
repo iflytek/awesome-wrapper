@@ -1,0 +1,127 @@
+workspace:
+  base: /root
+  path: /src/git.xfyun.cn/AIaaS/xsf
+
+pipeline:
+  #示例
+  build_example_client:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd example/client
+      - chmod +x *
+      - ./build.sh
+
+  build_example_server:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd example/server
+      - chmod +x *
+      - ./build.sh
+
+  #授权
+  build_cgroup:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/cgroup
+      - chmod +x *
+      - ./build.sh
+
+  #授权
+  build_rate_client:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/rate/client
+      - chmod +x *
+      - ./build.sh
+
+  build_rate_server:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/rate/server
+      - chmod +x *
+      - ./build.sh
+
+  #授权
+  probes_live:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd probes/live
+      - chmod +x *
+      - ./build.sh
+
+  #性能
+  build_perf_client:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/perf/client
+      - chmod +x *
+      - ./build.sh
+
+  build_perf_server:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/perf/server
+      - chmod +x *
+      - ./build.sh
+
+  #grpc
+  build_grpc_client:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/grpc/client
+      - chmod +x *
+      - ./build.sh
+
+  build_grpc_server:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/grpc/server
+      - chmod +x *
+      - ./build.sh
+
+  #基本功能
+  build_basic_client:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/basic/client
+      - chmod +x *
+      - ./build.sh
+
+  build_basic_cmdClient:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/basic/cmdClient
+      - chmod +x *
+      - ./build.sh
+
+  build_basic_server:
+    group: build
+    image: 172.16.59.153/aiaas/ubuntu:14.04.gcc.golang
+    commands:
+      - cd lab/basic/server
+      - chmod +x *
+      - ./build.sh
+
+  publish:
+    image: plugins/docker
+    username: aiaas
+    password: aiaas
+    registry: 172.16.59.153
+    repo: 172.16.59.153/aiaas/xsf
+    tags:
+      - latest
+      - ${DRONE_TAG}
+    file: Dockerfile
+    insecure: true

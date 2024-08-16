@@ -1,0 +1,95 @@
+findergo  ---- 2023/09/19 11:43:09.945913 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:43:09.969081 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:43:09.974486 conn.go:385: Connected to [10.1.87.67:5181]
+findergo  ---- 2023/09/19 11:43:09.980831 conn.go:472: Authenticated: id=[152665897096064584 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:43:09.980831 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:43:09.984959 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:43:09.989071 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:46:51.280561 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:46:51.310469 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:46:51.316553 conn.go:385: Connected to [10.1.87.68:5181]
+findergo  ---- 2023/09/19 11:46:51.320967 conn.go:472: Authenticated: id=[217277215504209341 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:46:51.320967 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:46:51.325161 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:46:51.332580 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:46:51.347888 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:46:51.360486 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:46:51.364707 conn.go:385: Connected to [10.1.87.68:5181]
+findergo  ---- 2023/09/19 11:46:51.368965 conn.go:472: Authenticated: id=[217277215504209342 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:46:51.368965 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:46:51.375373 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:46:51.378544 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:46:51.391967 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:48:50.392479 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:48:50.415555 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:48:50.420623 conn.go:385: Connected to [10.1.87.67:5181]
+findergo  ---- 2023/09/19 11:48:50.430236 conn.go:472: Authenticated: id=[152665897096064626 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:48:50.430236 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:48:50.438266 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:48:50.445995 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:48:50.473893 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:48:50.485775 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:48:50.495234 conn.go:385: Connected to [10.1.87.67:5181]
+findergo  ---- 2023/09/19 11:48:50.499499 conn.go:472: Authenticated: id=[152665897096064627 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:48:50.499499 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:48:50.503853 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:48:50.508114 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:48:50.522924 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:48:50.536289 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:1000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:48:50.541664 conn.go:385: Connected to [10.1.87.68:5181]
+findergo  ---- 2023/09/19 11:48:50.548058 conn.go:472: Authenticated: id=[217277215504209363 4000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:48:50.548058 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:48:50.553292 servicefinder.go:554: zk data [<nil>] 
+findergo  ---- 2023/09/19 11:48:50.553796 servicefinder.go:576: query service provider from [/polaris/service/6e45cdce11321be5df55dc013aa6771a//1.0.0/provider zk: invalid path], err: %!v(MISSING)
+findergo  ---- 2023/09/19 11:48:50.553810 servicefinder.go:193:  [ UseAndSubscribeService ] subscribe service [ 1.0.0 zk: invalid path], version %!v(MISSING) , err :%!v(MISSING) 
+findergo  ---- 2023/09/19 11:48:50.553810 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:48:50.565023 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:1000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:48:50.569209 conn.go:385: Connected to [10.1.87.67:5181]
+findergo  ---- 2023/09/19 11:48:50.575129 conn.go:472: Authenticated: id=[152665897096064628 4000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:48:50.575129 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:48:50.579943 servicefinder.go:554: zk data [<nil>] 
+findergo  ---- 2023/09/19 11:48:50.587920 servicefinder.go:434: get data from [/polaris/service/1719ffd1300e38802bcac9fcefc661c6/lb-niche/1.0.0/provider/172.31.94.45:40878] is empty :
+findergo  ---- 2023/09/19 11:48:50.591712 servicefinder.go:434: get data from [/polaris/service/1719ffd1300e38802bcac9fcefc661c6/lb-niche/1.0.0/provider/172.31.98.182:28234] is empty :
+findergo  ---- 2023/09/19 11:48:50.596271 servicefinder.go:613: get config data from path: [/polaris/service/1719ffd1300e38802bcac9fcefc661c6/lb-niche/1.0.0/conf] is emtpy
+findergo  ---- 2023/09/19 11:48:50.601782 servicefinder.go:634: query route data from path: [/polaris/service/1719ffd1300e38802bcac9fcefc661c6/lb-niche/1.0.0/route] empty
+findergo  ---- 2023/09/19 11:48:50.601782 servicefinder.go:369: call register func%!(EXTRA []interface {}=[])
+findergo  ---- 2023/09/19 11:48:50.601782 servicefinder.go:371: servicePath:  [/polaris/service/1719ffd1300e38802bcac9fcefc661c6/lb-niche/1.0.0/consumer/10.7.110.18:10617]
+findergo  ---- 2023/09/19 11:48:50.606300 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:48:50.619709 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:1000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:48:50.623602 conn.go:385: Connected to [10.1.87.68:5181]
+findergo  ---- 2023/09/19 11:48:50.627499 conn.go:472: Authenticated: id=[217277215504209364 4000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:48:50.627499 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:48:50.632245 servicefinder.go:554: zk data [<nil>] 
+findergo  ---- 2023/09/19 11:48:50.639253 servicefinder.go:434: get data from [/polaris/service/f3053bfb34b0e0ac5592a0dfbc4f0ac0/lbv2/1.0.0/provider/10.1.87.70:25386] is empty :
+findergo  ---- 2023/09/19 11:48:50.643373 servicefinder.go:434: get data from [/polaris/service/f3053bfb34b0e0ac5592a0dfbc4f0ac0/lbv2/1.0.0/provider/10.1.87.70:9094] is empty :
+findergo  ---- 2023/09/19 11:48:50.647545 servicefinder.go:613: get config data from path: [/polaris/service/f3053bfb34b0e0ac5592a0dfbc4f0ac0/lbv2/1.0.0/conf] is emtpy
+findergo  ---- 2023/09/19 11:48:50.652267 servicefinder.go:634: query route data from path: [/polaris/service/f3053bfb34b0e0ac5592a0dfbc4f0ac0/lbv2/1.0.0/route] empty
+findergo  ---- 2023/09/19 11:48:50.652267 servicefinder.go:369: call register func%!(EXTRA []interface {}=[])
+findergo  ---- 2023/09/19 11:48:50.652267 servicefinder.go:371: servicePath:  [/polaris/service/f3053bfb34b0e0ac5592a0dfbc4f0ac0/lbv2/1.0.0/consumer/10.7.110.18:10619]
+findergo  ---- 2023/09/19 11:50:42.472829 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:50:42.492188 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:50:42.498297 conn.go:385: Connected to [10.1.87.68:5181]
+findergo  ---- 2023/09/19 11:50:42.505034 conn.go:472: Authenticated: id=[217277215504209378 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:50:42.505034 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:50:42.510263 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:50:42.514676 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:50:42.528307 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:50:42.538577 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:5000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:50:43.545344 conn.go:390: Failed to connect to [10.1.86.70:5181 dial tcp 10.1.86.70:5181: i/o timeout]: %!v(MISSING)
+findergo  ---- 2023/09/19 11:50:43.550438 conn.go:385: Connected to [10.1.87.67:5181]
+findergo  ---- 2023/09/19 11:50:43.554553 conn.go:472: Authenticated: id=[152665897096064645 5000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:50:43.554553 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:50:43.559582 configfinder.go:163: subscribe file ：[[server.toml]]
+findergo  ---- 2023/09/19 11:50:43.565106 configfinder.go:330: basePath [/polaris/config/6e45cdce11321be5df55dc013aa6771a/00ca3df7415f891ea1b0c4dcf362b681]
+findergo  ---- 2023/09/19 11:50:43.580745 findermanager.go:286: current version : [] 2.0.18
+findergo  ---- 2023/09/19 11:50:43.593541 findermanager.go:207: storage info ： [map[servers:10.1.87.67:5181,10.1.87.68:5181,10.1.86.70:5181 session_timeout:1000 zk_node_path:/polaris/zkNode/zk0000695692]] 
+findergo  ---- 2023/09/19 11:50:44.596770 conn.go:390: Failed to connect to [10.1.86.70:5181 dial tcp 10.1.86.70:5181: i/o timeout]: %!v(MISSING)
+findergo  ---- 2023/09/19 11:50:44.601755 conn.go:385: Connected to [10.1.87.67:5181]
+findergo  ---- 2023/09/19 11:50:44.606431 conn.go:472: Authenticated: id=[152665897096064646 4000], timeout=%!d(MISSING)
+findergo  ---- 2023/09/19 11:50:44.606431 conn.go:401: Re-submitting `[0]` credentials after reconnect
+findergo  ---- 2023/09/19 11:50:44.611121 servicefinder.go:554: zk data [<nil>] 
+findergo  ---- 2023/09/19 11:50:44.615192 servicefinder.go:580:  [ getServiceWithWatcher ]current  service provider is emtpy []
+findergo  ---- 2023/09/19 11:50:44.619416 servicefinder.go:613: get config data from path: [/polaris/service/6e45cdce11321be5df55dc013aa6771a/xsf-lbv2/1.0.0/conf] is emtpy
+findergo  ---- 2023/09/19 11:50:44.623596 servicefinder.go:634: query route data from path: [/polaris/service/6e45cdce11321be5df55dc013aa6771a/xsf-lbv2/1.0.0/route] empty
+findergo  ---- 2023/09/19 11:50:44.623596 servicefinder.go:369: call register func%!(EXTRA []interface {}=[])
+findergo  ---- 2023/09/19 11:50:44.623596 servicefinder.go:371: servicePath:  [/polaris/service/6e45cdce11321be5df55dc013aa6771a/xsf-lbv2/1.0.0/consumer/10.7.110.18:10683]

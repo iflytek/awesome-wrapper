@@ -1,0 +1,52 @@
+version: "3"
+services:
+  xsf-server1:
+    image: 172.16.59.153/aiaas/xsf:2.0.0
+    network_mode: "host"
+    working_dir: "/xsf/basic/server"
+    restart: "no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${PWD}/server:/xsf/basic/server/server
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: ./server
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server  -u "http://10.1.87.69:6868"'
+
+  xsf-server2:
+    image: 172.16.59.153/aiaas/xsf:2.0.0
+    network_mode: "host"
+    working_dir: "/xsf/basic/server"
+    restart: "no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${PWD}/server:/xsf/basic/server/server
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: ./server
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server2  -u "http://10.1.87.69:6868"'
+
+  xsf-server3:
+    image: 172.16.59.153/aiaas/xsf:2.0.0
+    network_mode: "host"
+    working_dir: "/xsf/basic/server"
+    restart: "no"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${PWD}/server:/xsf/basic/server/server
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: ./server
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server3  -u "http://10.1.87.69:6868"'
+
+
+#docker-compose -f docker-compose.yml up  --scale xsf-server1=3 --scale xsf-server2=3  --scale xsf-server3=3

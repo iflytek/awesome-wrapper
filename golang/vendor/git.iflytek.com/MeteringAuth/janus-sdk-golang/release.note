@@ -1,0 +1,5 @@
+authenticate
+    * 2.3.1 支持CloudID多租户功能
+
+report
+    * 2.4.1 支持sync异地数据上报功能

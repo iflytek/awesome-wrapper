@@ -1,0 +1,63 @@
+version: "2.2"
+services:
+  server:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/perf/server
+    network_mode: "host"
+    restart: "no"
+    environment:
+        - METRICS-PORT=22345
+        - XSF-DEBUG=0
+    cpus: 72 
+    volumes:
+        - ${PWD}/server-log:/xsf/perf/server/log
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './server'
+    #command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868 -dur 100'
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868'
+
+  server2:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/perf/server
+    network_mode: "host"
+    restart: "no"
+    environment:
+        - METRICS-PORT=22346
+        - XSF-DEBUG=0
+    cpus: 72
+    volumes:
+        - ${PWD}/server-log2:/xsf/perf/server/log
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './server'
+    #command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868 -dur 200'
+    #command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server2 -u http://10.1.87.69:6868'
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868'
+
+  server3:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/perf/server
+    network_mode: "host"
+    restart: "no"
+    environment:
+        - METRICS-PORT=22347
+        - XSF-DEBUG=0
+    cpus: 72
+    volumes:
+        - ${PWD}/server-log3:/xsf/perf/server/log
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './server'
+    #command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868 -dur 300'
+    #command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server3 -u http://10.1.87.69:6868'
+    command: '-m 1 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868'

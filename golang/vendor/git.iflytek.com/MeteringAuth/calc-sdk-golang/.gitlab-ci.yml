@@ -1,0 +1,28 @@
+stages:
+  - build
+variables:
+  REPO_NAME: git.iflytek.com/MeteringAuth/calc-sdk-golang
+
+
+before_script:
+  - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+  - ln -svf $CI_PROJECT_DIR $GOPATH/src/git.iflytek.com/MeteringAuth
+  - cd $GOPATH/src/$REPO_NAME
+  - echo $REPO_NAME
+#  - cd $CI_PROJECT_DIR/../../
+#  - echo $CI_PROJECT_DIR
+#  - mkdir -p src/git.iflytek.com/
+#  - mv MeteringAuth src/git.iflytek.com
+#  - cd src/$REPO_NAME
+
+build-sdk:
+  stage: build
+  only:
+    - dev
+    - master
+  script:
+    - cd ./calc
+    - make build
+  tags:
+    - docker-meter
+

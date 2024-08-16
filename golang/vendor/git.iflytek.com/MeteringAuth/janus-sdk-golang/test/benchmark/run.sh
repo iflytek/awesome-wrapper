@@ -1,0 +1,3 @@
+#./benchmark -package=authenticate -thread_num=3000 -loop_num=100000 -appid=4CC5779A -channel=tts -funcs=vcn.xiaoyan -url="http://10.1.87.69:6868" -project=guiderAllService -group=gas -service=janus-client -version="2.0.6"
+./benchmark -package=authenticate -thread_num=3 -loop_num=10 -appid=4CC5779A -channel=tts -funcs=vcn.xiaoyan -url="http://10.1.87.69:6868" -project=metrics -group=reporter -service=janus-client -version="2.0.6"
+#./benchmark -package=report -scale=1 -thread_num=3000 -loop_num=100000 -appid=4CC5779A -channel=tts -url="http://10.1.87.69:6868" -project=guiderAllService -group=gas -service=janus -version="2.0.1"

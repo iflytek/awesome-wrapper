@@ -1,0 +1,37 @@
+syntax = "proto3" ;
+option go_package = "syncproto";
+
+
+enum asyncOp {
+	inc = 0;
+	dec = 1;
+}
+
+message metaTuple {
+		string app_id = 1;
+		string channel = 2;
+		string function = 3;
+  }
+  
+message aqc_metadata{
+  	metaTuple tuple = 1;
+  	string addr = 2;
+  	int32 delta = 3;
+}
+// 精确数据同步请求
+message aqc_request {
+    repeated aqc_metadata data = 1;
+}
+
+message async_metadata {
+    metaTuple tuple = 1 ;
+    string request_id = 2;
+	int64 expire = 3;
+	asyncOp op = 4;
+}
+
+// 异步数据同步请求
+message async_request {
+    repeated async_metadata data = 1;
+}
+

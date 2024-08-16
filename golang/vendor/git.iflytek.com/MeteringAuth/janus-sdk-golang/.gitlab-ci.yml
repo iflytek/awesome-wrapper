@@ -1,0 +1,88 @@
+stages:
+  - build
+variables:
+  REPO_NAME: git.iflytek.com/MeteringAuth/janus-sdk-golang
+
+
+before_script:
+  - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+  - ln -svf $CI_PROJECT_DIR $GOPATH/src/git.iflytek.com/MeteringAuth
+  - cd $GOPATH/src/$REPO_NAME
+  - echo $REPO_NAME
+#  - cd $CI_PROJECT_DIR/../../
+#  - echo $CI_PROJECT_DIR
+#  - mkdir -p src/git.iflytek.com/
+#  - mv MeteringAuth src/git.iflytek.com
+#  - cd src/$REPO_NAME
+
+build-sdk:
+  stage: build
+  only:
+    - dev
+    - master
+  script:
+    - cd ./authenticate
+    - make
+  tags:
+    - docker-meter
+
+build-report-sdk:
+  stage: build
+  only:
+    - dev
+    - dev-report
+    - master
+  script:
+    - cd ./report
+    - make
+  tags:
+    - docker-meter
+
+build-report-test:
+  stage: build
+  only:
+    - dev
+    - dev-report
+    - master
+  script:
+    - cd ./test/report
+    - make
+  tags:
+    - docker-meter
+
+
+build-benchmark-test:
+  stage: build
+  only:
+    - dev
+    - dev-report
+    - master
+  script:
+    - cd ./test/benchmark
+    - make
+  tags:
+    - docker-meter
+
+build-businServerSimulate-test:
+  stage: build
+  only:
+    - dev
+    - dev-report
+    - master
+  script:
+    - cd ./test/concurrentControl/businServerSimulate
+    - make
+  tags:
+    - docker-meter
+
+build-engineServerSimulate-test:
+  stage: build
+  only:
+    - dev
+    - dev-report
+    - master
+  script:
+    - cd ./test/concurrentControl/engineServerSimulate
+    - make
+  tags:
+    - docker-meter

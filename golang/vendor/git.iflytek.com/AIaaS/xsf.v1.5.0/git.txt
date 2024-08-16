@@ -1,0 +1,16 @@
+go env -w GOSUMDB=off
+
+git config --global url."git@git.iflytek.com:AIaaS/finder-go.git".insteadOf "https://git.iflytek.com/AIaaS/finder-go.git"
+git config --global url."git@git.iflytek.com:AIaaS/lumberjack-ccr.git".insteadOf "https://git.iflytek.com/AIaaS/lumberjack-ccr.git"
+git config --global url."git@git.iflytek.com:AIaaS/xsf.git".insteadOf "https://git.iflytek.com/AIaaS/xsf.git"
+git config --global url."git@git.iflytek.com:sqjian/flange.git".insteadOf "https://git.iflytek.com/AIaaS/flange.git"
+git config --global url."git@git.iflytek.com:sqjian/sonar.git".insteadOf "https://git.iflytek.com/AIaaS/sonar.git"
+git config --global url."git@git.iflytek.com:sqjian/flume.git".insteadOf "https://git.iflytek.com/AIaaS/flume.git"
+git config --global url."git@git.iflytek.com:sqjian/thrift.git".insteadOf "https://git.iflytek.com/AIaaS/thrift.git"
+git config --global url."git@git.iflytek.com:sqjian/uuid.git".insteadOf "https://git.iflytek.com/AIaaS/uuid.git"
+git config --global url."git@git.iflytek.com:sqjian/lb_client.git".insteadOf "https://git.iflytek.com/AIaaS/lb_client.git"
+git config --global url."git@git.iflytek.com:sqjian/lbclientpb.git".insteadOf "https://git.iflytek.com/AIaaS/lbclientpb.git"
+git config --global url."git@git.iflytek.com:sqjian/redisgo.git".insteadOf "https://git.iflytek.com/AIaaS/redisgo.git"
+
+
+git config --global url."git@git.iflytek.com:".insteadOf "https://git.iflytek.com/"

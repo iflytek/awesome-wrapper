@@ -1,0 +1,33 @@
+[janus-report]
+conn-timeout = 1000
+lb-mode= 3
+timeout = 500
+conn-pool-size = 12
+lb-retry = 3
+
+[trace]
+host="127.0.0.1"
+port="4545"
+able = -1
+dump = 0
+bcluster = "5s"
+idc = "dz"
+
+[log]
+level = "error" #缺省warn
+file = "./log/xsfs-report.log" #缺省xsfs.log
+#日志文件的大小，单位MB
+size = 300 #缺省10
+#日志文件的备份数量
+count = 3 #缺省10
+#日志文件的有效期，单位Day
+die = 3 #缺省10
+#缓存大小，单位条数,超过会丢弃
+cache = 100000 #缺省-1，代表不丢数据，堆积到内存中
+#批处理大小，单位条数，一次写入条数（触发写事件的条数）
+batch = 160#缺省16*1024
+#异步日志
+async = 0 #缺省异步
+#是否添加调用行信息
+caller = 1 #缺省0
+wash = 60 #写入磁盘的缺省时间

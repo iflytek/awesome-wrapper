@@ -1,0 +1,40 @@
+[janus-check-func]
+conn-timeout = 20
+conn-pool-size = 12         #rpc连接池数量。缺省4
+lb-mode= 3  #0禁用lb,2使用lb。缺省0
+lb-retry = 1
+timeout = 50 #ms
+#CtrlDayFlow CtrlTimeFlow//时授 CtrlCountFlow//量授  CtrlUserFlow//用户级 CtrlFreeFlow//免费次数 CtrlSecFlow//秒级流控 CtrlConcFlow //并发
+#z左边是最低位，右边是最高位  1 11111
+check_option = 125
+server_name = "janus"
+
+[janus-limit-func]
+conn-timeout = 1000
+lb-mode= 0
+lb-retry = 2
+timeout = 3000 #ms
+update_time = 60000  #ms
+server_name = "janus"
+
+[trace]
+host="127.0.0.1"
+port="4545"
+able = -1
+dump = 0
+bcluster = "5s"
+idc = "dz"
+
+[log]
+level = "error" #缺省warn
+file = "./janus-client.log" #缺省xsfs.log
+#日志文件的大小，单位MB
+size = 100 #缺省10
+#日志文件的备份数量
+count = 10 #缺省10
+#日志文件的有效期，单位Day
+die = 3 #缺省10
+#缓存大小，单位条数,超过会丢弃
+cache = 100000 #缺省-1，代表不丢数据，堆积到内存中
+#批处理大小，单位条数，一次写入条数（触发写事件的条数）
+batch = 160#缺省16*1024

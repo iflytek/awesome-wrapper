@@ -1,0 +1,32 @@
+POST http://172.16.59.176:5200/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "2",
+  "service_address": "http://42.62.42.18/msp.do"
+}
+
+### curl -H 'Content-Type:application/json' -d '{"id": "2", "service_address": "http://42.62.42.18/msp.do"}' http://172.16.59.176:5200/api/v1/mission/exec
+
+###
+
+POST http://172.16.59.176:5200/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "2",
+  "service_address": "http://42.62.42.18/msp.do",
+  "async": false
+}
+
+###
+POST http://172.16.59.176:5200/api/v1/mission/exec
+Content-Type: application/json
+
+{
+  "id": "2",
+  "service_address": "http://42.62.42.18/msp.do",
+  "async": true
+}
+
+###

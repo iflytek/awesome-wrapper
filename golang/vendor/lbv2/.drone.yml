@@ -1,0 +1,31 @@
+pipeline:
+    build:
+       image: 172.16.59.153/aiaas/ubuntugo:1.9.2
+       commands:
+         - export GOPATH=/usr/local/gopath
+         - export GOROOT=/usr/local/go
+         - PATH=/usr/local/go/bin:$PATH
+         - mkdir -p $GOPATH/src
+         - mkdir -p $GOPATH/src/lb
+         - echo $GOPATH
+         - echo `pwd`
+         - cp -r ./* $GOPATH/src/lb
+         - cd $GOPATH/src/lb 
+         - echo `pwd`
+         - go build -v -o lb
+         - echo "build success"
+         - cd -
+         - echo `pwd`
+         - ls
+         - cp $GOPATH/src/lb/lb ./bin && ls
+
+    publish:
+      image: plugins/docker
+      username: aiaas
+      password: aiaas
+      registry: 172.16.59.153
+      email: jbchen5@iflytek.com
+      repo: 172.16.59.153/aiaas/lb
+      tag: 2.0.2
+      file: Dockerfile
+      insecure: true

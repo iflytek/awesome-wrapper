@@ -1,0 +1,16 @@
+version: "3"
+services:
+  server:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/perf/server
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    entrypoint: './server'
+    command: '-m 0 -c server.toml -p xsf -g xsf -s xsf-server -u http://10.1.87.69:6868'
+
+#docker-compose up --scale beacon=3

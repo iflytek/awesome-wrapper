@@ -1,0 +1,16 @@
+version: "3" 
+services:  
+  rate-client:
+    image: 172.16.59.153/aiaas/xsf:test
+    network_mode: "host"
+    restart: "no"
+    working_dir: /xsf/rate/client
+    ulimits:
+      nproc: 65535
+      nofile:
+          soft: 65535
+          hard: 65535
+    volumes: 
+      - /home/sqjian/client/client.toml:/xsf/rate/client/client.toml
+      - /home/sqjian/client/log:/xsf/rate/client/log
+    entrypoint: ./client -g 1 -c 1 -tm 1000 -mode 0 -retry 3

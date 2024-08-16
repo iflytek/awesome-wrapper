@@ -1,0 +1,10 @@
+demo/licc/licc
+demo/calc/calc
+demo/rep/rep
+demo/demo
+
+xsf_status/
+ma-sdk-cfg/
+findergo.log
+*.cfg.toml
+.idea

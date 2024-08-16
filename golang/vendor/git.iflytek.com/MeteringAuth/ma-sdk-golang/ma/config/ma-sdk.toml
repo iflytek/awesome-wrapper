@@ -1,0 +1,91 @@
+[metrics]
+#参数齐则开启metrics
+able = 1
+idc = "hf"
+sub = "ma-sdk"
+cs = "1s"
+timePerSlice = 1000 #滑动窗口bucket大小，单位毫秒
+winSize = 10 #窗口大小
+
+[trace]
+able = -1
+
+[sonar]
+able = 0
+
+################################################################
+[calc]
+use = "mq" 
+#use = "rpc"
+queue_size = 10000
+[calc.rmq]
+able = true
+producer_number = 2
+endpoint = ["172.31.98.182:10800"]
+topic = "lic_lkc_bj"
+# 消息队列服务连接超时时间
+# millisecond
+timeout = 500
+[calc.pulsar]
+able = true
+idc="hf"
+appids = ["testCalcSDK"]
+topic = "persistent://aiaas/metering/isol"
+endpoint = "pulsar://10.1.87.69:6650"
+[rpc]
+conn-timeout = 100
+conn-pool-size = 12         #rpc连接池数量。缺省4
+lb-mode= 3  #0禁用lb,2使用lb。缺省0
+lb-retry = 1
+#conn-rbuf =  1048576
+#conn-wbuf = 1048576
+finder = 0
+#taddrs = "router@172.31.98.182:8098"
+################################################################
+duration = 567 #ms
+################################################################
+
+[rep]
+conn-timeout = 100
+conn-pool-size = 12         #rpc连接池数量。缺省4
+lb-mode= 3  #0禁用lb,2使用lb。缺省0
+lb-retry = 1
+#conn-rbuf =  1048576
+#conn-wbuf = 1048576
+finder = 0
+#taddrs = "router@172.31.98.182:8098"
+################################################################
+duration = 456 #millisecond
+################################################################
+
+[licc]
+conn-timeout = 100
+conn-pool-size = 12         #rpc连接池数量。缺省4
+lb-mode= 3  #0禁用lb,2使用lb。缺省0
+lb-retry = 1
+#conn-rbuf =  1048576
+#conn-wbuf = 1048576
+finder = 0
+#taddrs = "router@172.31.98.182:8098"
+################################################################
+check_opnion = 125
+duration = 123 #millisecond
+[lmtres]
+conn-timeout = 100
+conn-pool-size = 12         #rpc连接池数量。缺省4
+lb-mode= 3  #0禁用lb,2使用lb。缺省0
+lb-retry = 1
+#conn-rbuf =  1048576
+#conn-wbuf = 1048576
+finder = 0
+#taddrs = "router@172.31.98.182:8098"
+################################################################
+update_time = 345 #millisecond
+duration = 234 #millisecond
+################################################################
+
+[log]
+level = "debug"
+file = "./log/ma-sdk.log"
+async = false
+batch = 1

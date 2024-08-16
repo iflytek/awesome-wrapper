@@ -1,0 +1,15 @@
+[calc]
+queue_size = 10000
+consume_number = 2
+hosts = ["10.1.87.19:10800"]
+topic = "lic_lkc_bj"
+# 消息队列服务连接超时时间
+# millisecond
+timeout = 500
+enable = true
+
+[log]
+level = "info"
+path = "./calc.log"
+format = "json" 
+console_print = false

@@ -1,0 +1,15 @@
+version: "3" 
+services:  
+  rate-server:
+    image: 172.16.59.153/aiaas/xsf:test
+    network_mode: "host"
+    restart: "no"
+    working_dir: /xsf/rate/server
+    ulimits:
+      nproc: 65535
+      nofile:
+          soft: 65535
+          hard: 65535
+    volumes: 
+      - /home/sqjian/server/server.toml:/xsf/rate/server/server.toml
+    entrypoint: ./server -m 0

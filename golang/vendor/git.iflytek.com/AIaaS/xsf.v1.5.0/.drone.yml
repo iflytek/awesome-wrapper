@@ -1,0 +1,106 @@
+workspace:
+  base: /root
+  path: /src/git.iflytek.com/AIaaS/xsf
+
+pipeline:
+  #示例
+  build_example_client:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_example_client
+
+  build_example_server:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_example_server
+
+  #授权
+  build_cgroup:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_cgroup
+
+  #授权
+  build_rate_client:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_rate_client
+
+  build_rate_server:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_rate_server
+
+  #授权
+  probes_live:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make probes_live
+
+  #性能
+  build_perf_client:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_perf_client
+
+  build_perf_server:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_perf_server
+
+  #grpc
+  build_grpc_client:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_grpc_client
+
+  build_grpc_server:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_grpc_server
+
+  #基本功能
+  build_basic_client:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_basic_client
+
+  build_basic_host_adapter:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_basic_host_adapter
+
+  build_basic_cmdClient:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_basic_cmdClient
+
+  build_basic_server:
+    group: build
+    image: registry.cn-hangzhou.aliyuncs.com/sqjian/venv:ubuntu20_04
+    commands:
+      - . /etc/profile && make build_basic_server
+
+  publish:
+    image: plugins/docker
+    secrets: [docker_username, docker_password]
+    registry: hub.iflytek.com
+    repo: hub.iflytek.com/aiaas/xsf
+    tags:
+      - latest
+      - ${DRONE_TAG}
+    file: Dockerfile
+    insecure: true

@@ -1,0 +1,34 @@
+version: "3"
+services:
+  client:
+    image: 172.16.59.153/aiaas/xsf:0.0.0
+    working_dir: /xsf/perf/client
+    network_mode: "host"
+    restart: "no"
+    stop_signal: SIGINT
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    volumes:
+      - ${PWD}/cli1:/xsf/perf/client/log
+    entrypoint: './client'
+    #command: '-m 0 -tm 1000 -goroutines 50 -count 10000 -s 0'
+    #command: '-m 0 -tm 1000 -goroutines 300 -count 10000 -s 0'
+    command: '-m 0 -tm 1000 -goroutines 300 -count 1000 -s 0 -delay 40'
+
+  client-hystrix:
+    image: 172.16.59.153/aiaas/xsf:2.0.0
+    working_dir: /xsf/perf/client
+    network_mode: "host"
+    restart: "no"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+    volumes:
+      - ${PWD}/cli1:/xsf/perf/client/log
+    entrypoint: './client'
+    command: '-m 1 -tm 1000 -goroutines 50 -count 100000 -s 2'
