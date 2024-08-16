@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 	"unsafe"
 
 	"git.iflytek.com/AIaaS/xsf/utils"
@@ -63,11 +62,12 @@ func WrapperInit(cfg map[string]string) (err error) {
 // WrapperExec 非流式调用. params参数由客户端请求时传入, 本地调试时, params参数由xtest.toml提供
 func WrapperExec(usrTag string, params map[string]string, reqData []comwrapper.WrapperData) (respData []comwrapper.WrapperData, err error) {
 	sid := params["sid"]
-	wLogger.Errorw("WrapperExec Enter", "params", params, "sid", sid)
+	wLogger.Debugw("WrapperExec Enter", "params", params, "sid", sid)
 
 	respData = make([]comwrapper.WrapperData, 0, len(reqData))
 	for _, req := range reqData {
-		numbers := strings.Split(string(req.Data), ",")
+		text := strings.TrimSpace(string(req.Data))
+		numbers := strings.Split(text, ",")
 		var total int64
 		for _, number := range numbers {
 			n, err := strconv.ParseInt(number, 10, 64)
@@ -143,36 +143,4 @@ func WrapperSetCtrl(fType comwrapper.CustomFuncType, f interface{}) (err error) 
 
 	}
 	return
-}
-
-type wrapperInst struct {
-	usrTag string
-	sid    string
-	db     *storage
-}
-
-type storage struct {
-	status comwrapper.DataStatus
-	data   []byte
-}
-
-// 模拟向引擎模型写入数据
-func (inst *wrapperInst) write(status comwrapper.DataStatus, data []byte) error {
-	if inst.db == nil {
-		inst.db = &storage{}
-	}
-	inst.db.status = status
-	inst.db.data = data
-	return nil
-}
-
-// 模拟从引擎模型读取数据
-func (inst *wrapperInst) read() (status comwrapper.DataStatus, data []byte, err error) {
-	return inst.db.status, inst.db.data, nil
-}
-
-func (inst *wrapperInst) traceLogWithTime(key string, msg string) {
-	tn := time.Now()
-	formattedTime := tn.Format("2006-01-02 15:04:05.999999")
-	traceLogFunc(inst.usrTag, key, "time:"+formattedTime+"; "+msg)
 }
