@@ -1,6 +1,5 @@
 package main
 
-import "C"
 import (
 	"comwrapper"
 	"fmt"
@@ -59,7 +58,7 @@ func WrapperInit(cfg map[string]string) (err error) {
 	return
 }
 
-// WrapperCreate 插件会话示例创建, 每次建立会话请求时创建. 本地调试时, params参数由xtest.toml提供
+// WrapperCreate 插件会话实例创建, 每次建立会话请求时调用. 本地调试时, params参数由xtest.toml提供
 func WrapperCreate(usrTag string, params map[string]string, prsIds []int, cb comwrapper.CallBackPtr) (hdl unsafe.Pointer, err error) {
 	sid := params["sid"]
 	paramStr := ""
@@ -167,6 +166,7 @@ type storage struct {
 	data   []byte
 }
 
+// 模拟向引擎模型写入数据
 func (inst *wrapperInst) write(status comwrapper.DataStatus, data []byte) error {
 	if inst.db == nil {
 		inst.db = &storage{}
@@ -176,6 +176,7 @@ func (inst *wrapperInst) write(status comwrapper.DataStatus, data []byte) error 
 	return nil
 }
 
+// 模拟从引擎模型读取数据
 func (inst *wrapperInst) read() (status comwrapper.DataStatus, data []byte, err error) {
 	return inst.db.status, inst.db.data, nil
 }
