@@ -14,10 +14,6 @@ from aiges.sdk import WrapperBase
 from aiges.utils.log import getFileLogger
 
 
-def get_payload(reqData: DataListCls):
-    return json.loads(reqData.get('input').data.decode('utf-8'))
-
-
 def response_data(text):
     content = {
         "data": text,
@@ -46,11 +42,14 @@ class Wrapper(WrapperBase):
     serviceId = "atp"
     version = "v1"
 
-    def __init__(self, logLevel, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.logger = getFileLogger(LOG_LEVEL_MAP[logLevel])
+        self.logger = None
 
     def wrapperInit(self, config: {}) -> int:
+        print(f'wrapperInit configs: {config}')
+        logLevel = config["log_level"]
+        self.logger = getFileLogger(level=LOG_LEVEL_MAP[logLevel])
         return 0
 
     def wrapperFini(self) -> int:
@@ -64,8 +63,13 @@ class Wrapper(WrapperBase):
     def wrapperOnceExec(self, params: {}, reqData: DataListCls, usrTag: str = "", persId: int = 0) -> Response:
         sid = params["sid"]
         self.logger.debug(f"WrapperOnceExec, params: {params}, sid: {sid}")
-        text = get_payload(reqData)["text"]
+
+        text = reqData.get('input').data.decode('utf-8')
+        self.logger.debug(f'wrapperOnceExec, text: {text}, sid: {sid}')
 
         res = Response()
         res.list = [response_data(text)]
         return res
+
+    def wrapperTestFunc(self, data: [], respData: []):
+        pass
