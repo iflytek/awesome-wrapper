@@ -3,6 +3,7 @@
 #include <iostream>
 #include "aiges/wrapper.h"
 #include "wrapper_error.h"
+#include "nlohmann/json.hpp"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/spdlog.h"
 #include "manager.h"
