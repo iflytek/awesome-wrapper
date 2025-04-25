@@ -177,6 +177,13 @@ func WrapperExec(usrTag string, params map[string]string, reqData []comwrapper.W
 		return nil, err
 	}
 
+	code := meterFunc(usrTag, meterFunction, len(data))
+	if code == 0 {
+		wLogger.Debugw("trace metering data", "code", code, "count", len(data), "sid", e.sid)
+	} else {
+		wLogger.Errorw("failed to report metering data", "code", code, "count", len(data), "sid", e.sid)
+	}
+
 	respData = append(respData, comwrapper.WrapperData{
 		Key:      respKey,
 		Data:     data,
