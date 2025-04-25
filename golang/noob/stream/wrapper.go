@@ -2,8 +2,12 @@ package main
 
 import (
 	"comwrapper"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/mozillazg/go-pinyin"
 	"strconv"
+	"sync"
 	"time"
 	"unsafe"
 
@@ -11,15 +15,18 @@ import (
 )
 
 var (
-	wLogger  *utils.Logger
-	logLevel = "debug"
-	logCount = 10
-	logSize  = 30
-	logAsync = true
-	logPath  = "/log/app/wrapper/wrapper.log"
+	wLogger       *utils.Logger
+	logLevel      = "debug"
+	logCount      = 10
+	logSize       = 30
+	logAsync      = true
+	logPath       = "/log/app/wrapper.log"
+	respKey       = "result"
+	meterFunction = "chars.total"
 )
 
-var traceLogFunc func(usrTag string, key string, value string) (code int)
+var traceFunc func(usrTag string, key string, value string) (code int)
+var meterFunc func(usrTag string, key string, count int) (code int)
 
 // WrapperInit 插件初始化, 全局只调用一次. 本地调试时, cfg参数由aiges.toml提供
 func WrapperInit(cfg map[string]string) (err error) {
@@ -41,6 +48,9 @@ func WrapperInit(cfg map[string]string) (err error) {
 	}
 	if cfg["log_async"] == "false" {
 		logAsync = false
+	}
+	if v, ok := cfg["resp_key"]; ok {
+		respKey = v
 	}
 
 	wLogger, err = utils.NewLocalLog(
@@ -67,9 +77,20 @@ func WrapperCreate(usrTag string, params map[string]string, prsIds []int, cb com
 	}
 	wLogger.Debugw("WrapperCreate params", "paramStr", paramStr, "sid", sid)
 
-	inst := wrapperInst{
-		sid:    sid,
-		usrTag: usrTag,
+	inst := newEngine(usrTag, sid)
+
+	if cb != nil {
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					wLogger.Errorw("engine pusher crashed", "err", r, "sid", inst.sid)
+				}
+			}()
+
+			if err = inst.push(usrTag, cb); err != nil {
+				wLogger.Errorw("engine push error", "error", err, "sid", sid, "usrTag", usrTag)
+			}
+		}()
 	}
 
 	wLogger.Debugw("WrapperCreate successful", "sid", sid)
@@ -78,39 +99,54 @@ func WrapperCreate(usrTag string, params map[string]string, prsIds []int, cb com
 
 // WrapperWrite 数据写入
 func WrapperWrite(hdl unsafe.Pointer, req []comwrapper.WrapperData) (err error) {
-	inst := (*wrapperInst)(hdl)
+	inst := (*engine)(hdl)
 
 	if len(req) == 0 {
 		wLogger.Debugw("WrapperWrite data is nil", "sid", inst.sid)
 		return nil
 	}
 
+	var status comwrapper.DataStatus
 	for _, v := range req {
-		if err = inst.write(v.Status, v.Data); err != nil {
+		status = v.Status
+		inst.meterCount += len(v.Data)
+
+		if err = inst.write(string(v.Data), v.Status); err != nil {
 			wLogger.Errorw("WrapperWrite inst.write", "error", err.Error(), "sid", inst.sid)
-			return err
+			break
 		}
 	}
 
-	return nil
+	// 最后一帧时, 上报计量数据
+	if status == comwrapper.DataEnd {
+		code := meterFunc(inst.usrTag, meterFunction, inst.meterCount)
+		if code == 0 {
+			wLogger.Debugw("trace metering data", "code", code, "count", inst.meterCount, "sid", inst.sid)
+		} else {
+			wLogger.Errorw("failed to report metering data", "code", code, "count", inst.meterCount, "sid", inst.sid)
+		}
+	}
+
+	return err
 }
 
-// WrapperRead 数据结果读取
+// WrapperRead 数据结果读取, 服务配置[aiges]项配置asyncMode = false
 func WrapperRead(hdl unsafe.Pointer) (respData []comwrapper.WrapperData, err error) {
-	inst := (*wrapperInst)(hdl)
+	inst := (*engine)(hdl)
 
-	status, data, err := inst.read()
+	data, status, err := inst.read()
 	if err != nil {
 		wLogger.Errorw("WrapperRead inst.read", "error", err.Error(), "sid", inst.sid)
 		return nil, err
 	}
 
 	resultData := comwrapper.WrapperData{
-		Type:   comwrapper.DataText,
-		Key:    "result",
-		Data:   data,
-		Desc:   map[string]string{},
-		Status: status,
+		Key:      respKey,
+		Data:     data,
+		Desc:     map[string]string{},
+		Encoding: "utf-8",
+		Type:     comwrapper.DataText,
+		Status:   status,
 	}
 
 	respData = append(respData, resultData)
@@ -118,15 +154,42 @@ func WrapperRead(hdl unsafe.Pointer) (respData []comwrapper.WrapperData, err err
 	return
 }
 
+// WrapperDestroy 会话资源销毁
 func WrapperDestroy(hdl interface{}) (err error) {
+	inst := (*engine)(hdl.(unsafe.Pointer))
+	wLogger.Debugw("WrapperDestroy", "sid", inst.sid)
+	return
+}
+
+// WrapperExec 非流式请求-同步响应
+func WrapperExec(usrTag string, params map[string]string, reqData []comwrapper.WrapperData) (respData []comwrapper.WrapperData, err error) {
+	wLogger.Debugw("WrapperExec", "params", params, "reqData", reqData)
+	e := newEngine(usrTag, params["sid"])
+	payload := reqData[0]
+	if err = e.write(string(payload.Data), payload.Status); err != nil {
+		wLogger.Errorw("WrapperExec engine write", "error", err, "sid", e.sid)
+		return nil, err
+	}
+
+	data, _, err := e.read()
+	if err != nil {
+		wLogger.Errorw("WrapperExec engine read", "error", err, "sid", e.sid)
+		return nil, err
+	}
+
+	respData = append(respData, comwrapper.WrapperData{
+		Key:      respKey,
+		Data:     data,
+		Desc:     map[string]string{},
+		Encoding: "utf-8",
+		Type:     comwrapper.DataText,
+		Status:   comwrapper.DataOnce,
+	})
+
 	return
 }
 
 func WrapperFini() (err error) {
-	return
-}
-
-func WrapperExec(usrTag string, params map[string]string, reqData []comwrapper.WrapperData) (respData []comwrapper.WrapperData, err error) {
 	return
 }
 
@@ -146,43 +209,141 @@ func WrapperDebugInfo(hdl interface{}) (debug string) {
 func WrapperSetCtrl(fType comwrapper.CustomFuncType, f interface{}) (err error) {
 	switch fType {
 	case comwrapper.FuncTraceLog:
-		cf := f.(func(usrTag string, key string, value string) (code int))
-		traceLogFunc = cf
+		traceFunc = f.(func(usrTag string, key string, value string) (code int))
 		fmt.Println("WrapperSetCtrl traceLogFunc set successful.")
+	case comwrapper.FuncMeter:
+		meterFunc = f.(func(usrTag string, key string, count int) (code int))
+		fmt.Println("WrapperSetCtrl meterFunc set successful.")
 	default:
 
 	}
 	return
 }
 
-type wrapperInst struct {
-	usrTag string
-	sid    string
-	db     *storage
+func (e *engine) traceLogWithTime(key string, msg string) {
+	tn := time.Now()
+	formattedTime := tn.Format("2006-01-02 15:04:05.999999")
+	traceFunc(e.usrTag, key, "time:"+formattedTime+"; "+msg)
 }
 
-type storage struct {
+// 模拟引擎 - 中文转拼音引擎
+type engine struct {
+	meterCount int
+	usrTag     string
+	sid        string
+	base       pinyin.Args
+	jobs       *jobs
+	jobsLock   sync.Mutex
+}
+
+type jobs struct {
+	head *jobNode
+	tail *jobNode
+}
+
+type jobNode struct {
+	hans   string
+	py     [][]string
 	status comwrapper.DataStatus
-	data   []byte
+	next   *jobNode
+}
+
+func newEngine(usrTag, sid string) *engine {
+	a := pinyin.NewArgs()
+	a.Style = pinyin.Tone
+
+	return &engine{
+		usrTag: usrTag,
+		sid:    sid,
+		base:   a,
+		jobs:   &jobs{},
+	}
 }
 
 // 模拟向引擎模型写入数据
-func (inst *wrapperInst) write(status comwrapper.DataStatus, data []byte) error {
-	if inst.db == nil {
-		inst.db = &storage{}
+func (e *engine) write(hans string, status comwrapper.DataStatus) error {
+	e.jobsLock.Lock()
+	defer e.jobsLock.Unlock()
+
+	if e.jobs.head == nil {
+		e.jobs.head = &jobNode{hans: hans, py: pinyin.Pinyin(hans, e.base), status: status}
+		e.jobs.tail = e.jobs.head
+		return nil
 	}
-	inst.db.status = status
-	inst.db.data = data
+
+	e.jobs.tail.next = &jobNode{hans: hans, py: pinyin.Pinyin(hans, e.base), status: status}
+	e.jobs.tail = e.jobs.tail.next
+
 	return nil
 }
 
-// 模拟从引擎模型读取数据
-func (inst *wrapperInst) read() (status comwrapper.DataStatus, data []byte, err error) {
-	return inst.db.status, inst.db.data, nil
+// 模拟从引擎模型读取数据, 服务配置[aiges]项配置asyncMode = false
+func (e *engine) read() ([]byte, comwrapper.DataStatus, error) {
+	e.jobsLock.Lock()
+	defer e.jobsLock.Unlock()
+
+	if e.jobs.head == nil {
+		return nil, 0, errors.New("no valid jobs")
+	}
+
+	data, err := json.Marshal(&Result{Hans: e.jobs.head.hans, Pinyin: e.jobs.head.py})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	status := e.jobs.head.status
+
+	e.jobs.head = e.jobs.head.next
+	return data, status, nil
 }
 
-func (inst *wrapperInst) traceLogWithTime(key string, msg string) {
-	tn := time.Now()
-	formattedTime := tn.Format("2006-01-02 15:04:05.999999")
-	traceLogFunc(inst.usrTag, key, "time:"+formattedTime+"; "+msg)
+// 引擎主动向加载器推送数据, 服务配置[aiges]项配置asyncMode = true
+func (e *engine) push(handle string, cb comwrapper.CallBackPtr) error {
+	for {
+		var head *jobNode
+		e.jobsLock.Lock()
+		head = e.jobs.head
+		e.jobsLock.Unlock()
+
+		if head == nil {
+			time.Sleep(time.Millisecond * 200)
+			continue
+		}
+
+		data, err := json.Marshal(&Result{Hans: head.hans, Pinyin: head.py})
+		if err != nil {
+			return cb(handle, nil, err)
+		}
+
+		resp := []comwrapper.WrapperData{
+			{
+				Key:      respKey,
+				Data:     data,
+				Desc:     nil,
+				Encoding: "utf-8",
+				Type:     comwrapper.DataText,
+				Status:   head.status,
+			},
+		}
+
+		if err = cb(handle, resp, nil); err != nil {
+			return err
+		}
+
+		if head.status == comwrapper.DataEnd || head.status == comwrapper.DataOnce {
+			break
+		}
+
+		e.jobsLock.Lock()
+		e.jobs.head = e.jobs.head.next
+		e.jobsLock.Unlock()
+		time.Sleep(time.Millisecond * 200)
+	}
+
+	return nil
+}
+
+type Result struct {
+	Hans   string     `json:"hans"`
+	Pinyin [][]string `json:"pinyin"` // 可能包含多音字
 }
