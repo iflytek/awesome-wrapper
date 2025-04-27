@@ -94,7 +94,7 @@ func WrapperCreate(usrTag string, params map[string]string, prsIds []int, cb com
 	}
 
 	wLogger.Debugw("WrapperCreate successful", "sid", sid)
-	return unsafe.Pointer(&inst), nil
+	return unsafe.Pointer(inst), nil
 }
 
 // WrapperWrite 数据写入
@@ -111,6 +111,7 @@ func WrapperWrite(hdl unsafe.Pointer, req []comwrapper.WrapperData) (err error) 
 		status = v.Status
 		inst.meterCount += len(v.Data)
 
+		wLogger.Debugw("WrapperWrite data", "data", string(v.Data), "status", v.Status, "sid", inst.sid)
 		if err = inst.write(string(v.Data), v.Status); err != nil {
 			wLogger.Errorw("WrapperWrite inst.write", "error", err.Error(), "sid", inst.sid)
 			break
@@ -275,6 +276,7 @@ func (e *engine) write(hans string, status comwrapper.DataStatus) error {
 	if e.jobs.head == nil {
 		e.jobs.head = &jobNode{hans: hans, py: pinyin.Pinyin(hans, e.base), status: status}
 		e.jobs.tail = e.jobs.head
+		e.jobs.head.next = e.jobs.tail
 		return nil
 	}
 
