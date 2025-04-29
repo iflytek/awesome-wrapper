@@ -1,1 +1,0 @@
-client.exe -tm 1000 -mode 1

@@ -1,3 +1,0 @@
-// +build !rbspy
-
-package rbspy

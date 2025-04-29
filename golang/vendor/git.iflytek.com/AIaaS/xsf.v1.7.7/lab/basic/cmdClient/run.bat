@@ -1,1 +1,0 @@
-cmdClient.exe -h 10.1.87.67 -p 16382 -o 1

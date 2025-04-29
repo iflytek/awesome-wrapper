@@ -1,1 +1,0 @@
-{"ServiceName":"atmos-iat","ApiVersion":"1.0.0","ProviderList":[{"Addr":"10.1.87.69:42336","Config":{"is_valid":true,"UserConfig":""}}],"Config":{"JsonConfig":"{\"a\":\"b\",\"loadbalance\":\"ConsistentHash\"}"}}
